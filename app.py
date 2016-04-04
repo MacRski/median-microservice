@@ -37,7 +37,15 @@ def put(put_int):
 
 @app.route('/median', methods=['GET'])
 def median():
-    """Return the median for all the values sent to /put in the last minute."""
+    """
+    Initiate a median processing request.
+
+    Returns a JSON object in the following format:
+    {
+        "job_id": {job_id},
+        "url": {url_where_result_will_be_returned}
+    }
+    """
     job = q.enqueue_call(
         func=calculate_median, result_ttl=5000
     )
@@ -50,12 +58,25 @@ def median():
 
 @app.route("/median-results/<job_id>", methods=['GET'])
 def median_request_results(job_id):
-    """Return results of a median calculation request."""
+    """
+    Return results of a median calculation request.
+
+    HTTP 200: If calculation is complete. Response JSON object format:
+    {
+        "message": "Calculation complete!",
+        "median": {calculated_median}
+    }
+
+    HTTP 202: If calculation is not-yet complete. Response JSON object format:
+    {
+        "message": "Still processing..."
+    }
+    """
     job = Job.fetch(job_id, connection=redis_conn)
     if job.is_finished:
         result_dict = jsonify({
             "message": "Calculation complete!",
-            "median_of_last_minute": job.result
+            "median": job.result
         })
         return result_dict, 200
     else:
