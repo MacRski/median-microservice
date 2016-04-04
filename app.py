@@ -14,16 +14,20 @@ app = Flask(__name__)
 q = Queue(connection=redis_conn)
 
 
-@app.route('/put/<int:put_int>')
+@app.route('/put/<int:put_int>', methods=['GET'])
 def put(put_int):
     """
     Receive an integer, store it in redis.
 
-    key: integer
-    value: 1 (always)
-    time expiry: 1 minute
+    Integers are stored in redis as keys in the following format: 'int:{int}'.
+    Values of each key are the amount of times that integer was 'put'.
+    Keys expire after a minute.
     """
-    redis_conn.setex("int:{}".format(put_int), 1, 60)
+    redis_key = "int:{}".format(put_int)
+    if redis_conn.get(redis_key):
+        redis_conn.incr(redis_key)
+    else:
+        redis_conn.setex("int:{}".format(put_int), 1, 60)
     expires = datetime.datetime.now() + datetime.timedelta(minutes=1)
     return jsonify({
         "integer_received": put_int,
@@ -31,7 +35,7 @@ def put(put_int):
     })
 
 
-@app.route('/median')
+@app.route('/median', methods=['GET'])
 def median():
     """Return the median for all the values sent to /put in the last minute."""
     job = q.enqueue_call(
@@ -46,7 +50,7 @@ def median():
 
 @app.route("/median-results/<job_id>", methods=['GET'])
 def median_request_results(job_id):
-    """Return."""
+    """Return results of a median calculation request."""
     job = Job.fetch(job_id, connection=redis_conn)
     if job.is_finished:
         result_dict = jsonify({
