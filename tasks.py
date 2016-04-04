@@ -11,9 +11,9 @@ def calculate_median():
         key
         for key in redis_conn.scan_iter(match='int:*')
     ]
-    counts = redis_conn.mget(keys)
     key_list = []
     if keys:
+        counts = redis_conn.mget(keys)
         for key, count in izip(keys, counts):
             if count is None:
                 count = '1'
