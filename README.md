@@ -1,6 +1,12 @@
 # Median Microservice
 
-A simple microservice that calculates the median of integers:
+A simple microservice that calculates the median of integers.
+
+## Example Server
+
+* URL: http://104.131.52.223
+* CPU: Single
+* RAM: 512MB
 
 ## Endpoints
 
