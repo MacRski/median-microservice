@@ -1,6 +1,6 @@
 # Median Microservice
 
-A simple microservice that calculates the median of integers.
+A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates the median of integers.
 
 ## Example Server
 
