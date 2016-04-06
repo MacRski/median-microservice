@@ -5,6 +5,7 @@ import time
 from flask import Flask, url_for
 from flask import jsonify
 from rq import Queue
+from rq.exceptions import NoSuchJobError
 from rq.job import Job
 
 from tasks import calculate_median
@@ -72,17 +73,23 @@ def median_request_results(job_id):
         "message": "Still processing..."
     }
     """
-    job = Job.fetch(job_id, connection=redis_conn)
-    if job.is_finished:
-        result_dict = jsonify({
-            "message": "Calculation complete!",
-            "median": job.result
-        })
-        return result_dict, 200
+    try:
+        job = Job.fetch(job_id, connection=redis_conn)
+    except NoSuchJobError:
+        return jsonify({
+            "message": "No job exists with ID: {}".format(job_id)
+        }), 404
     else:
-        return {
-            "message": "Still processing..."
-        }, 202
+        if job.is_finished:
+            result_dict = jsonify({
+                "message": "Calculation complete!",
+                "median": job.result
+            })
+            return result_dict, 200
+        else:
+            return jsonify({
+                "message": "Still processing..."
+            }), 202
 
 if __name__ == '__main__':
     app.run()
