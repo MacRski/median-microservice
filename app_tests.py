@@ -4,7 +4,8 @@ import unittest
 
 from flask import json
 
-import app
+from app import app as microservice
+from worker import redis_conn
 
 
 class MedianMicroServiceTestCase(unittest.TestCase):
@@ -19,7 +20,7 @@ class MedianMicroServiceTestCase(unittest.TestCase):
 
     def setUp(self):
         """Setup the test client."""
-        self.app = app.app.test_client()
+        self.app = microservice.test_client()
 
     def test_missing_job_id(self):
         """Test incorrect median result requests are handled correctly."""
@@ -37,6 +38,7 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         NOTE: This test will fail if the redis queue consumer (worker.py)
         is not running simultaneously (see README.md for details).
         """
+        redis_conn.flushall()
         req_1 = self.app.get('/put/1')
         assert '"integer_received": 1' in req_1.data
         req_2 = self.app.get('/put/1')
