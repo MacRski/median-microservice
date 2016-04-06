@@ -86,16 +86,16 @@ Now visit http://127.0.0.1:5000/put/50 to put your first integer (50) into the m
 
 To run tests, first open a shell, activate the virtualenv and start the redis queue consumer (worker.py):
 
-    ```bash
-    $ cd median-microservice
-    $ source ENV/bin/activate
-    $ python worker.py
-    ```
+```bash
+$ cd median-microservice
+$ source ENV/bin/activate
+$ python worker.py
+```
 
 Now, open a separate shell, activate the virtualenv and kick off the tests:
 
-    ```bash
-    $ cd median-microservice
-    $ source ENV/bin/activate
-    $ python app_tests.py
-    ```
+```bash
+$ cd median-microservice
+$ source ENV/bin/activate
+$ python app_tests.py
+```
