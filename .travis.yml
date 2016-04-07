@@ -1,3 +1,6 @@
+# Send this build to the travis.ci container-based infrastructure
+# which typically has more capacity than the open-source Linux pool
+sudo: false
 language: python
 python:
   - "2.7"
@@ -7,6 +10,4 @@ services:
 install:
   - pip install -r requirements.txt
 # command to run tests
-script:
-  - python app_tests.py
-  - python worker_tests.py
+script: python app_tests.py && python worker_tests.py
