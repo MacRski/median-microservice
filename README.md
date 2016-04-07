@@ -1,4 +1,4 @@
-[![travis-ci](https://travis-ci.org/respondcreate/median-microservice.svg?branch=master)](https://travis-ci.org/respondcreate/median-microservice/)
+[![travis-ci](https://travis-ci.org/respondcreate/median-microservice.svg?branch=master)](https://travis-ci.org/respondcreate/median-microservice/) [![coveralls](https://img.shields.io/coveralls/respondcreate/median-microservice.svg?style=flat)](https://coveralls.io/github/respondcreate/median-microservice)
 
 # Median Microservice
 
