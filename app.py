@@ -27,6 +27,7 @@ def put(put_int):
     redis_key = "int:{}".format(put_int)
     if redis_conn.get(redis_key):
         redis_conn.incr(redis_key)
+        redis_conn.expire(redis_key, 60)
     else:
         redis_conn.setex("int:{}".format(put_int), 1, 60)
     expires = datetime.datetime.now() + datetime.timedelta(minutes=1)
