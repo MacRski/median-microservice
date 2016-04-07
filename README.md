@@ -86,10 +86,8 @@ Now visit http://127.0.0.1:5000/put/50 to put your first integer (50) into the m
 
 ## Running Tests
 
-Run tests with these commands:
+Run tests with this command (be sure your virtualenv is activated before running):
 
 ```bash
-$ cd median-microservice
-$ source ENV/bin/activate
-$ python app_tests.py && python worker_tests.py
+$ python app_tests.py
 ```
