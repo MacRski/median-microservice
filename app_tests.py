@@ -9,14 +9,7 @@ from worker import redis_conn
 
 
 class MedianMicroServiceTestCase(unittest.TestCase):
-    """
-    Tests for median-microservice.
-
-    Before running tests be sure the redis queue consumer (worker.py)
-    is running in a separate shell:
-
-        $ python worker.py
-    """
+    """Tests for median-microservice."""
 
     def setUp(self):
         """Setup the test client."""
@@ -32,12 +25,7 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         )
 
     def test_microservice(self):
-        """
-        Test the microservice.
-
-        NOTE: This test will fail if the redis queue consumer (worker.py)
-        is not running simultaneously (see README.md for details).
-        """
+        """Test the microservice."""
         redis_conn.flushall()
         req_1 = self.app.get('/put/1')
         assert '"integer_received": 1' in req_1.data
@@ -54,11 +42,8 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         median_req = self.app.get('/median')
         median_as_dict = json.loads(median_req.data)
         time.sleep(1)
-        median_job_req = self.app.get(
-            '/median-results/{}'.format(median_as_dict['job_id'])
-        )
-        results_as_dict = json.loads(median_job_req.data)
-        assert results_as_dict['median'] == 5
+        # Set the job_id to redis for worker_tests.py
+        redis_conn.set('TEST_JOB_ID', median_as_dict['job_id'])
 
 
 if __name__ == '__main__':

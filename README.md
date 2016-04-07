@@ -1,3 +1,5 @@
+[![travis-ci](https://travis-ci.org/respondcreate/median-microservice.svg?branch=master)](https://travis-ci.org/respondcreate/median-microservice/)
+
 # Median Microservice
 
 A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates the median of integers.
@@ -84,18 +86,10 @@ Now visit http://127.0.0.1:5000/put/50 to put your first integer (50) into the m
 
 ## Running Tests
 
-To run tests, first open a shell, activate the virtualenv and start the redis queue consumer (worker.py):
+Run tests with these commands:
 
 ```bash
 $ cd median-microservice
 $ source ENV/bin/activate
-$ python worker.py
-```
-
-Now, open a separate shell, activate the virtualenv and kick off the tests:
-
-```bash
-$ cd median-microservice
-$ source ENV/bin/activate
-$ python app_tests.py
+$ python app_tests.py && python worker_tests.py
 ```
