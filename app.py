@@ -92,5 +92,5 @@ def median_request_results(job_id):
                 "message": "Still processing..."
             }), 202
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     app.run()

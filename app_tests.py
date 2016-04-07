@@ -42,6 +42,14 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         del req_6
         median_req = self.app.get('/median')
         median_as_dict = json.loads(median_req.data)
+        median_not_finished_job_req = self.app.get(
+            '/median-results/{}'.format(median_as_dict['job_id'])
+        )
+        assert median_not_finished_job_req.status_code == 202
+        not_finished_as_dict = json.loads(median_not_finished_job_req.data)
+        assert not_finished_as_dict['message'] == (
+            "Still processing..."
+        )
         time.sleep(1)
         with Connection(redis_conn):
             queue = Queue(connection=redis_conn)
