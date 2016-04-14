@@ -1,6 +1,6 @@
 """Main Flask app for median-microservice."""
-import datetime
-import time
+from datetime import datetime, timedelta
+from time import mktime
 
 from flask import Flask, url_for
 from flask import jsonify
@@ -20,27 +20,23 @@ def put(put_int):
     """
     Receive an integer, store it in redis.
 
-    Integers are stored in redis as keys in the following format: 'int:{int}'.
-    Values of each key are the amount of times that integer was 'put'.
-    Keys expire after a minute.
+    Keys are unix timestamps of when they were stored in redis.
     """
-    redis_key = "int:{}".format(put_int)
-    if redis_conn.get(redis_key):
-        redis_conn.incr(redis_key)
-        redis_conn.expire(redis_key, 60)
-    else:
-        redis_conn.setex("int:{}".format(put_int), 1, 60)
-    expires = datetime.datetime.now() + datetime.timedelta(minutes=1)
+    now = datetime.now()
+    key = int(mktime(now.timetuple()))
+    redis_conn.rpush(key, put_int)
+    redis_conn.expire(key, 3600)  # Expire this key in one hour.
+    expires = now + timedelta(minutes=1)
     return jsonify({
         "integer_received": put_int,
-        "expires": time.mktime(expires.timetuple())
+        "expires": int(mktime(expires.timetuple()))
     })
 
 
 @app.route('/median', methods=['GET'])
 def median():
     """
-    Initiate a median processing request.
+    Initiate a median calculation for all integers stored in the last minute.
 
     Returns a JSON object in the following format:
     {
@@ -49,7 +45,10 @@ def median():
     }
     """
     job = q.enqueue_call(
-        func=calculate_median, result_ttl=5000
+        func=calculate_median,
+        args=(datetime.now(),),
+        kwargs={'minutes': 1},
+        result_ttl=5000
     )
     job_id = job.get_id()
     return jsonify({

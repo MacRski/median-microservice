@@ -32,10 +32,12 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         assert '"integer_received": 1' in req_1.data
         req_2 = self.app.get('/put/1')
         del req_2
+        time.sleep(1)  # Staggering requests
         req_3 = self.app.get('/put/4')
         del req_3
         req_4 = self.app.get('/put/6')
         del req_4
+        time.sleep(1)  # Staggering requests
         req_5 = self.app.get('/put/8')
         del req_5
         req_6 = self.app.get('/put/10')
@@ -61,7 +63,6 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         )
         results_as_dict = json.loads(median_job_req.data)
         assert results_as_dict['median'] == 5
-
 
 if __name__ == '__main__':
     unittest.main()
