@@ -28,19 +28,20 @@ class MedianMicroServiceTestCase(unittest.TestCase):
     def test_microservice(self):
         """Test the microservice."""
         redis_conn.flushall()
-        req_1 = self.app.get('/put/1')
-        assert '"integer_received": 1' in req_1.data
-        req_2 = self.app.get('/put/1')
+        req_1 = self.app.post('/put', data={'int': 1})
+        req_1_as_json = json.loads(req_1.data)
+        assert req_1_as_json['integer_received'] == "1"
+        req_2 = self.app.post('/put', data={'int': 1})
         del req_2
         time.sleep(1)  # Staggering requests
-        req_3 = self.app.get('/put/4')
+        req_3 = self.app.post('/put', data={'int': 4})
         del req_3
-        req_4 = self.app.get('/put/6')
+        req_4 = self.app.post('/put', data={'int': 6})
         del req_4
         time.sleep(1)  # Staggering requests
-        req_5 = self.app.get('/put/8')
+        req_5 = self.app.post('/put', data={'int': 8})
         del req_5
-        req_6 = self.app.get('/put/10')
+        req_6 = self.app.post('/put', data={'int': 10})
         del req_6
         median_req = self.app.get('/median')
         median_as_dict = json.loads(median_req.data)

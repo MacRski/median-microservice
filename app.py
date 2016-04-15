@@ -2,8 +2,7 @@
 from datetime import datetime, timedelta
 from time import mktime
 
-from flask import Flask, url_for
-from flask import jsonify
+from flask import Flask, jsonify, request, url_for
 from rq import Queue
 from rq.exceptions import NoSuchJobError
 from rq.job import Job
@@ -15,13 +14,20 @@ app = Flask(__name__)
 q = Queue(connection=redis_conn)
 
 
-@app.route('/put/<int:put_int>', methods=['GET'])
-def put(put_int):
+@app.route('/put', methods=['POST', 'PUT'])
+def put():
     """
     Receive an integer, store it in redis.
 
+    Expects a JSON object on PUT/POST in the following format:
+
+    {
+        'int': <integer>
+    }
+
     Keys are unix timestamps of when they were stored in redis.
     """
+    put_int = request.form.get('int')
     now = datetime.now()
     key = int(mktime(now.timetuple()))
     redis_conn.rpush(key, put_int)
