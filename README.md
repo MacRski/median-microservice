@@ -12,7 +12,13 @@ A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates t
 
 ## Endpoints
 
-- `/put/<int>` (GET): Store an integer for one minute.
+- `/put` (POST/PUT): Store an integer for one minute. Expects a JSON object in the following structure:
+
+    ```json
+    {
+        "int": <integer>
+    }
+    ```
 - `/median` (GET): Initiate a median calculation request for all stored integers received over the last minute. Returns a JSON object in the following format:
 
     ```json
