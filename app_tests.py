@@ -25,12 +25,17 @@ class MedianMicroServiceTestCase(unittest.TestCase):
             "No job exists with ID: i-do-not-exist"
         )
 
+    def test_bad_int(self):
+        """Ensure invalid /put requests return HTTP 422."""
+        req = self.app.post('/put', data={'int': 'foo'})
+        assert req.status_code == 422
+
     def test_microservice(self):
         """Test the microservice."""
         redis_conn.flushall()
         req_1 = self.app.post('/put', data={'int': 1})
         req_1_as_json = json.loads(req_1.data)
-        assert req_1_as_json['integer_received'] == "1"
+        assert req_1_as_json['integer_received'] == 1
         req_2 = self.app.post('/put', data={'int': 1})
         del req_2
         time.sleep(1)  # Staggering requests

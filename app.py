@@ -27,7 +27,12 @@ def put():
 
     Keys are unix timestamps of when they were stored in redis.
     """
-    put_int = request.form.get('int')
+    try:
+        put_int = int(request.form.get('int'))
+    except ValueError:
+        return jsonify({
+            "message": "'int' must be a valid integer."
+        }), 422
     now = datetime.now()
     key = int(mktime(now.timetuple()))
     redis_conn.rpush(key, put_int)
