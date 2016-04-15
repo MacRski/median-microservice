@@ -6,7 +6,7 @@ A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates t
 
 ## Example Server
 
-* URL: http://104.131.52.223
+* URL: http://159.203.166.146/
 * CPU: Single
 * RAM: 512MB
 
