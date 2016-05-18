@@ -1,0 +1,21 @@
+web:
+  restart: always
+  build: ./web
+  expose:
+    - "8000"
+  links:
+    - redis:redis
+  command: supervisord -c /etc/supervisor/conf.d/supervisord.conf
+
+nginx:
+  restart: always
+  build: ./nginx/
+  ports:
+    - "80:80"
+  links:
+    - web:web
+
+redis:
+    image: redis
+    ports:
+        - "6379"

@@ -14,6 +14,14 @@ app = Flask(__name__)
 q = Queue(connection=redis_conn)
 
 
+@app.route('/test', methods=['GET'])
+def test():
+    """Test route."""
+    return jsonify({
+        "msg": "oh hey 2!",
+    }), 200
+
+
 @app.route('/put', methods=['POST', 'PUT'])
 def put():
     """
