@@ -1,6 +1,7 @@
 *.pyc
 *.rdb
 ENV
+.env
 .coverage
 htmlcov
 htmlcov/*
