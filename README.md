@@ -4,12 +4,6 @@
 
 A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates the median of integers.
 
-## Example Server
-
-* URL: http://159.203.166.146/
-* CPU: Single
-* RAM: 512MB
-
 ## Endpoints
 
 - `/put` (POST/PUT): Store an integer for one minute. Expects a JSON object in the following structure:
@@ -71,6 +65,7 @@ A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates t
     $ cd median-microservice
     $ virtualenv ENV
     $ source ENV/bin/activate
+    $ cd web/
     $ pip install -r requirements.txt
     ```
 
@@ -85,6 +80,7 @@ A simple [Flask](http://flask.pocoo.org/)-powered microservice that calculates t
     ```bash
     $ cd median-microservice
     $ source ENV/bin/activate
+    $ cd web/
     $ python worker.py
     ```
 
@@ -95,5 +91,5 @@ Now visit http://127.0.0.1:5000/put/50 to put your first integer (50) into the m
 Run tests with this command (be sure your virtualenv is activated before running):
 
 ```bash
-$ python app_tests.py
+$ python web/app_tests.py
 ```
