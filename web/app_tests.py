@@ -1,10 +1,12 @@
 """Tests for median-microservice."""
+import os
 import time
 import unittest
 
 from flask import json
 from rq import Connection, Queue, SimpleWorker
 
+os.environ['REDISTOGO_URL'] = 'redis://localhost:6379'
 from app import app as microservice
 from worker import redis_conn
 
