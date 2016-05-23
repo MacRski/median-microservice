@@ -1,5 +1,6 @@
 """Main Flask app for median-microservice."""
 from datetime import datetime, timedelta
+from os import environ
 from time import mktime
 
 from flask import Flask, jsonify, request, url_for
@@ -10,7 +11,11 @@ from rq.job import Job
 from tasks import calculate_median
 from worker import redis_conn
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object(
+    environ.get('FLASK_SETTINGS', 'config.DevConfig')
+)
+
 q = Queue(connection=redis_conn)
 
 

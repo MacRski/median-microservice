@@ -93,3 +93,57 @@ Run tests with this command (be sure your virtualenv is activated before running
 ```bash
 $ python web/app_tests.py
 ```
+
+## Docker Commands
+
+The following commands assume you have both `docker-machine` and `docker-compose` installed.
+
+### Building a docker-machine
+
+1. Create a machine with docker-machine:
+
+    Locally, with virtualbox:
+
+    ```bash
+    $ docker-machine create -d virtualbox median-microservice
+    ```
+    
+    On DigitalOcean (assumes you have a valid DigitalOcean token set to the DO_TOKEN environment variable):
+        
+    ```bash
+    $ docker-machine create -d digitalocean --digitalocean-access-token=$DO_TOKEN median-microservice
+    ```
+
+    On Amazon AWS (assumes you have `~/.aws/credentials` set appropriately):
+        
+    ```bash
+    $ docker-machine create --driver amazonec2 --amazonec2-zone=b docker-demo
+    ```
+
+2. Make the median-microservice docker machine your 'current' one:
+    
+    ```bash
+    $ eval "$(docker-machine env median-microservice)"
+    ```
+
+### Spinning up with `docker-compose`
+
+1. First, build:
+
+    ```bash
+    $ docker-compose build
+    ```
+
+2. Spin up the server:
+
+    With development settings:
+
+    ```bash
+    $ docker-compose up -d
+    ```
+
+    With production settings:
+
+    ```bash
+    $ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+    ```

@@ -1,0 +1,3 @@
+web:
+  environment:
+    - FLASK_SETTINGS=config.ProductionConfig
