@@ -4,19 +4,16 @@ from os import environ
 from time import mktime
 
 from flask import Flask, jsonify, request, url_for
-from rq import Queue
 from rq.exceptions import NoSuchJobError
 from rq.job import Job
 
+from queue import task_queue, redis_conn
 from tasks import calculate_median
-from worker import redis_conn
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object(
     environ.get('FLASK_SETTINGS', 'config.DevConfig')
 )
-
-q = Queue(connection=redis_conn)
 
 
 @app.route('/put', methods=['POST', 'PUT'])
@@ -60,7 +57,7 @@ def median():
         "url": {url_where_result_will_be_returned}
     }
     """
-    job = q.enqueue_call(
+    job = task_queue.enqueue_call(
         func=calculate_median,
         args=(datetime.now(),),
         kwargs={'minutes': 1},
