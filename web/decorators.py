@@ -1,4 +1,4 @@
-"""Microservice decorators."""
+"""median-microservice decorators."""
 from functools import wraps
 from flask import jsonify, url_for
 
