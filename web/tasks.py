@@ -1,4 +1,4 @@
-"""Redis tasks for median-microservice."""
+"""Queueable tasks for median-microservice."""
 import numpy
 
 from utils import build_unix_daterange_from_end
