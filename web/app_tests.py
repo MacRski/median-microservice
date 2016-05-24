@@ -22,11 +22,11 @@ class MedianMicroServiceTestCase(unittest.TestCase):
 
     def test_missing_job_id(self):
         """Test incorrect median result requests are handled correctly."""
-        unavailable_job_req = self.app.get('/median-results/i-do-not-exist')
+        unavailable_job_req = self.app.get('/tasks/i-do-not-exist')
         assert unavailable_job_req.status_code == 404
         req_as_dict = json.loads(unavailable_job_req.data)
-        assert req_as_dict['message'] == (
-            "No job exists with ID: i-do-not-exist"
+        assert str(req_as_dict['message']) == (
+            'No task exists with ID: i-do-not-exist'
         )
 
     def test_bad_int(self):
@@ -55,7 +55,7 @@ class MedianMicroServiceTestCase(unittest.TestCase):
         median_req = self.app.get('/median')
         median_as_dict = json.loads(median_req.data)
         median_not_finished_job_req = self.app.get(
-            '/median-results/{}'.format(median_as_dict['job_id'])
+            '/tasks/{}'.format(median_as_dict['task_id'])
         )
         assert median_not_finished_job_req.status_code == 202
         not_finished_as_dict = json.loads(median_not_finished_job_req.data)
@@ -69,10 +69,10 @@ class MedianMicroServiceTestCase(unittest.TestCase):
             worker.work(burst=True)
 
         median_job_req = self.app.get(
-            '/median-results/{}'.format(median_as_dict['job_id'])
+            '/tasks/{}'.format(median_as_dict['task_id'])
         )
         results_as_dict = json.loads(median_job_req.data)
-        assert results_as_dict['median'] == 5
+        assert results_as_dict['task_results']['result'] == 5
 
 if __name__ == '__main__':
     unittest.main()

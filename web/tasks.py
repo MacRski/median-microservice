@@ -1,10 +1,12 @@
 """Queueable tasks for median-microservice."""
 import numpy
 
+from decorators import queueable_task
 from utils import build_unix_daterange_from_end
 from worker import redis_conn
 
 
+@queueable_task
 def calculate_median(end_date, **timedelta_kwargs):
     """
     Return the median of all integers stored in a range ending at `end_date`.

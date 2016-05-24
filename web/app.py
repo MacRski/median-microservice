@@ -3,14 +3,14 @@ from datetime import datetime, timedelta
 from os import environ
 from time import mktime
 
-from flask import Flask, jsonify, request, url_for
-from rq.exceptions import NoSuchJobError
-from rq.job import Job
+from flask import Flask, jsonify, request
 
-from queue import task_queue, redis_conn
+from decorators import queueable_task_route
+from queue import redis_conn, task_queue, task_detail_routes
 from tasks import calculate_median
 
 app = Flask(__name__, instance_relative_config=True)
+app.register_blueprint(task_detail_routes)
 app.config.from_object(
     environ.get('FLASK_SETTINGS', 'config.DevConfig')
 )
@@ -47,62 +47,23 @@ def put():
 
 
 @app.route('/median', methods=['GET'])
+@queueable_task_route
 def median():
     """
     Initiate a median calculation for all integers stored in the last minute.
 
     Returns a JSON object in the following format:
     {
-        "job_id": {job_id},
+        "task_id": {task_id},
         "url": {url_where_result_will_be_returned}
     }
     """
-    job = task_queue.enqueue_call(
+    return task_queue.enqueue_call(
         func=calculate_median,
         args=(datetime.now(),),
         kwargs={'minutes': 1},
         result_ttl=5000
     )
-    job_id = job.get_id()
-    return jsonify({
-        "job_id": job_id,
-        "url": url_for('median_request_results', job_id=job_id, _external=True)
-    })
-
-
-@app.route("/median-results/<job_id>", methods=['GET'])
-def median_request_results(job_id):
-    """
-    Return results of a median calculation request.
-
-    HTTP 200: If calculation is complete. Response JSON object format:
-    {
-        "message": "Calculation complete!",
-        "median": {calculated_median}
-    }
-
-    HTTP 202: If calculation is not-yet complete. Response JSON object format:
-    {
-        "message": "Still processing..."
-    }
-    """
-    try:
-        job = Job.fetch(job_id, connection=redis_conn)
-    except NoSuchJobError:
-        return jsonify({
-            "message": "No job exists with ID: {}".format(job_id)
-        }), 404
-    else:
-        if job.is_finished:
-            result_dict = jsonify({
-                "message": "Calculation complete!",
-                "median": job.result
-            })
-            return result_dict, 200
-        else:
-            return jsonify({
-                "message": "Still processing..."
-            }), 202
 
 if __name__ == '__main__':  # pragma: no cover
     app.run()
